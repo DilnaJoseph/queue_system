@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Service Queue Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Public Service Queue Management System</h1>
+            <p>Transparent • Efficient • Fair Service Delivery</p>
+        </div>
+
+        <div class="mode-toggle">
+            <button id="visitorModeBtn" class="active" onclick="switchMode('visitor')">Visitor Interface</button>
+            <button id="staffModeBtn" onclick="switchMode('staff')">Staff Dashboard</button>
+        </div>
+
+        <!-- Visitor Mode -->
+        <div id="visitorMode">
+            <div class="main-content">
+                <div>
+                    <div class="card" id="serviceSelectionCard">
+                        <h2>Select Your Service</h2>
+                        <div class="service-selection">
+                            <button class="service-btn" onclick="getToken('quick-approval')">
+                                <span class="service-icon">⚡</span>
+                                <div class="service-name">Quick Approval</div>
+                                <div class="service-time">Estimated: 5 minutes</div>
+                            </button>
+                            <button class="service-btn" onclick="getToken('document-verification')">
+                                <span class="service-icon">📄</span>
+                                <div class="service-name">Document Verification</div>
+                                <div class="service-time">Estimated: 10 minutes</div>
+                            </button>
+                            <button class="service-btn" onclick="getToken('consultation')">
+                                <span class="service-icon">💬</span>
+                                <div class="service-name">Consultation</div>
+                                <div class="service-time">Estimated: 20 minutes</div>
+                            </button>
+                            <button class="service-btn" onclick="getToken('payment')">
+                                <span class="service-icon">💳</span>
+                                <div class="service-name">Payment Services</div>
+                                <div class="service-time">Estimated: 7 minutes</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card hidden" id="myTokenCard">
+                        <div class="my-token">
+                            <h3>Your Queue Number</h3>
+                            <div class="big-token" id="myTokenNumber">A-042</div>
+                            <div class="status" id="myTokenStatus">3 visitors ahead in queue</div>
+                            <div class="status">Estimated wait time: <span id="myWaitTime">15 minutes</span></div>
+                            <div class="progress-indicator">
+                                <div class="progress-bar" id="myProgress" style="width: 25%"></div>
+                            </div>
+                        </div>
+                        <div class="alert">
+                            <strong>Note:</strong> You may leave the premises and return when notified. Our system will alert you when your turn approaches.
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>Live Queue Status</h2>
+                        <div class="announcement">
+                            <strong>System Status:</strong> All counters operational • Current average wait time: 12 minutes
+                        </div>
+                        <div class="queue-display" id="queueDisplay">
+                            <!-- Queue items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <h2>📊 Real-Time Stats</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="totalWaiting">24</div>
+                                <div class="stat-label">Visitors in Queue</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="avgWaitTime">12</div>
+                                <div class="stat-label">Avg Wait Time (min)</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="activeCounters">5</div>
+                                <div class="stat-label">Counters Active</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="servedToday">143</div>
+                                <div class="stat-label">Visitors Served Today</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>Service Information</h2>
+                        <div class="info-section">
+                            <p><strong>Operating Hours</strong>Monday - Friday: 9:00 AM - 5:00 PM</p>
+                            <p><strong>Peak Hours</strong>11:00 AM - 2:00 PM</p>
+                            <p><strong>Recommended Visit Times</strong>9:00 AM - 10:30 AM<br>3:00 PM - 4:30 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Staff Mode -->
+        <div id="staffMode" class="hidden">
+            <div class="main-content">
+                <div>
+                    <div class="card">
+                        <h2>Counter Management</h2>
+                        <div class="counter-selection">
+                            <button class="counter-btn active" onclick="selectCounter(1)">Counter 1</button>
+                            <button class="counter-btn" onclick="selectCounter(2)">Counter 2</button>
+                            <button class="counter-btn" onclick="selectCounter(3)">Counter 3</button>
+                            <button class="counter-btn" onclick="selectCounter(4)">Counter 4</button>
+                            <button class="counter-btn" onclick="selectCounter(5)">Counter 5</button>
+                        </div>
+
+                        <div class="alert success">
+                            Currently serving: <strong id="currentToken">A-039</strong> at Counter <strong id="currentCounter">1</strong>
+                        </div>
+
+                        <div class="staff-controls">
+                            <button class="control-btn" onclick="callNext()">Call Next Visitor</button>
+                            <button class="control-btn warning" onclick="markNoShow()">Mark as No-Show</button>
+                            <button class="control-btn" onclick="completeService()">Complete Service</button>
+                            <button class="control-btn danger" onclick="pauseCounter()">Pause Counter</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>Queue Overview by Service</h2>
+                        <div class="queue-display" id="staffQueueDisplay">
+                            <!-- Staff queue view -->
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <h2>Performance Metrics</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="staffServedToday">143</div>
+                                <div class="stat-label">Visitors Served</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="staffAvgService">8.5</div>
+                                <div class="stat-label">Avg Service Time (min)</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="staffNoShows">7</div>
+                                <div class="stat-label">No-Show Count</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="staffEfficiency">94</div>
+                                <div class="stat-label">Service Efficiency (%)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>Quick Actions</h2>
+                        <div class="staff-controls">
+                            <button class="control-btn" onclick="sendAnnouncement()">Send Announcement</button>
+                            <button class="control-btn warning" onclick="viewAnalytics()">View Analytics</button>
+                            <button class="control-btn" onclick="printQueue()">Print Queue List</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>System Status</h2>
+                        <div class="info-section">
+                            <div class="status-indicator">
+                                <span class="status-dot"></span>
+                                <span>System Online</span>
+                            </div>
+                            <div class="status-indicator">
+                                <span class="status-dot"></span>
+                                <span>All Counters Active</span>
+                            </div>
+                            <div class="status-indicator">
+                                <span class="status-dot"></span>
+                                <span>Notification System OK</span>
+                            </div>
+                            <div class="status-indicator">
+                                <span class="status-dot warning"></span>
+                                <span>Peak Load Expected</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
